@@ -1,6 +1,6 @@
 import AboutSection from "./components/AboutSection";
 import Download from "./components/Download";
-import Favorite from "./components/Favourite";
+// import Favorite from "./components/Favourite";
 import Homepage from "./components/HomePage";
 
 export default function Home() {
