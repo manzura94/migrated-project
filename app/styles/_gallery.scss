@@ -1,3 +1,6 @@
+@use "./variables" as *;
+@use "./mixins" as *;
+
 .gallery {
   &__title {
     margin-bottom: 40px;

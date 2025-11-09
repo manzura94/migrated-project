@@ -1,3 +1,7 @@
+@use "./variables" as *;
+@use "./mixins" as *;
+
+
 .page {
   padding: 40px;
 }
