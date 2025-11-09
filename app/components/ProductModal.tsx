@@ -17,7 +17,36 @@ const BASE_URL = "https://6kt29kkeub.execute-api.eu-central-1.amazonaws.com";
 
 export default function ProductModal({open,  setOpen, selectedProduct }: ProductModalProps) {
   const [data, setData] = useState<MergedProduct | null>(null);
-  const [isActive, setIsActive]=useState(false)
+  const [activeSize, setActiveSize]=useState('s');
+  const [selectedAdditives, setSelectedAdditives] = useState<string[]>([]);
+
+
+  const handleSizeButtonClick = (item: string)=>{
+    setActiveSize(item);
+    setSelectedAdditives([])
+  }
+
+  const handleAdditiveButtonClick = (name: string)=>{
+    setSelectedAdditives(prev => 
+    prev.includes(name)
+      ? prev.filter(item => item !== name)   
+      : [...prev, name]                      
+  )
+  };
+
+  const totalPrice = (()=>{
+    if(!data) return 0;
+   const basePrice = parseFloat(data.sizes[activeSize].price);
+   const additivesPrice = selectedAdditives.reduce((sum, additiveName) => {
+    const additive = data.additives.find(a => a.name === additiveName);
+    return additive ? sum + parseFloat(additive.price) : sum;
+  }, 0);
+
+  return basePrice + additivesPrice;
+
+  })()
+
+  
 
   useEffect(() => {
     if (!open || !selectedProduct) return;
@@ -71,7 +100,7 @@ console.log(data)
                          <div className="modal__buttonwrap">
                             <p className="modal__subtitle">Sizes</p>
                             <div className="menu__buttons">{Object.entries(data.sizes).map(([key, button])=>(
-                                <button key={key} className={`menu-button size-button ${isActive ? 'active' : ''}`}>
+                                <button key={key} className={`menu-button size-button ${activeSize === key ? 'active' : ''}`} onClick={()=>handleSizeButtonClick(key)}>
                                     <span className="menu__buttons-icon">{key}</span>
                                     <span className="menu__buttons-text">{button.size}</span>
                                 </button>
@@ -80,7 +109,7 @@ console.log(data)
                          <div className="modal__buttonwrap">
                             <p className="modal__subtitle">Additives</p>
                             <div className="menu__buttons">{Object.values(data.additives).map((button, index)=>(
-                                <button key={button.name} className="menu-button additives">
+                                <button key={button.name} className={`menu-button additives ${selectedAdditives.includes(button.name) ? 'active' : ''}`} onClick={()=>handleAdditiveButtonClick(button.name)}>
                                      <span className="menu__buttons-icon">{index+1}</span>
                                     <span className="menu__buttons-text">{button.name}</span>
                                 </button>
@@ -90,15 +119,16 @@ console.log(data)
                             <h4 className="modal__price-title">Total:</h4>
                             <h4 className="modal__price-num">
                                  <span className="modal__price-sign">$</span>
-                            <span className='modal__price-price'></span>
+                            <span className='modal__price-price'>{totalPrice.toFixed(2)}</span>
                             <span className='modal__price-old'></span>
                             <span className='modal__price-discount'></span>
                             </h4>
                            
                          </div>
                     </div>
+                    <button className="modal__closebtn">Add to cart</button>
                 </div>
-                <div className="modal__wrapper__closebtn">
+                <div className="modal__wrapper__closebtn" onClick={()=>setOpen(false)}>
                     <Image alt='close-button' width={50} height={50} src={'/images/icons/button-close.svg'} className='closebtn-image'/>
                 </div>
             </div>}
