@@ -3,6 +3,9 @@ import { Inter, Poppins } from "next/font/google";
 import "./globals.scss";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { AuthProvider } from "./context/AuthContext";
+import { CartProvider } from "./context/CartContext";
+
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const poppins = Poppins({
@@ -24,11 +27,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
       <body>
-        <div className="wrapper">
-          <Navbar />
-          <>{children}</>
-          <Footer />
-        </div>
+        <AuthProvider>
+          <CartProvider>    
+            <div className="wrapper">
+              <Navbar />
+              {children}
+              <Footer />
+            </div>
+          </CartProvider>
+        </AuthProvider>
+
       </body>
     </html>
   );

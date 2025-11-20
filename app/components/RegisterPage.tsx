@@ -3,7 +3,8 @@
 import React, { useState } from "react";
 import { UserData } from "../types/auth.interface";
 
-const BASE_URL = "https://6kt29kkeub.execute-api.eu-central-1.amazonaws.com";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+
 
 const cityToStreets: Record<string, string[]> = {
   newyork: ["5th Ave", "Broadway", "Wall Street"],
@@ -114,7 +115,6 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
 
     if (!isFormValid()) {
       setFormError("Please fix the highlighted errors before submitting.");
@@ -130,7 +130,7 @@ export default function RegisterPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      console.log(response);
+
 
       const data = await response.json();
 

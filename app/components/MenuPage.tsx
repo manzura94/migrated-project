@@ -7,8 +7,7 @@ import {
   MenuProduct,
   MergedProduct,
 } from "../types/product.inteface";
-import ProductModal from "./ProductModal";
-
+import ProductCard from "./ProductCard";
 
 const categoryButtons = [
   { id: 1, name: "coffee", image: "/images/icons/coffe.svg", alt: "coffee" },
@@ -16,20 +15,14 @@ const categoryButtons = [
   { id: 3, name: "dessert", image: "/images/icons/cake.svg", alt: "cake" },
 ];
 
-
-
-
-
-const BASE_URL = "https://6kt29kkeub.execute-api.eu-central-1.amazonaws.com";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 const FAVORITES_ENDPOINT = `${BASE_URL}/products`;
 
 export default function MenuPage() {
   const [category, setCategory] = useState("coffee");
   const [products, setProducts] = useState<MergedProduct[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<number | null>(null);
   const [error, setError] = useState(false);
   const [loader, setLoader] = useState(false);
-  const [open, setOpen] = useState(false);
 
   async function getAllProducts(): Promise<MergedProduct[]> {
     try {
@@ -76,11 +69,6 @@ export default function MenuPage() {
     }, 3000);
   };
 
-  const handleSelectProduct=(productid:number)=>{
-  setSelectedProduct(productid)
-  setOpen(true)
-  }
-
   useEffect(() => {
     getAllProducts();
   }, []);
@@ -88,7 +76,6 @@ export default function MenuPage() {
   const filteredProducts = products.filter(
     (item) => item.category === category,
   );
-
 
   return (
     <main className="menu menu__container">
@@ -116,28 +103,7 @@ export default function MenuPage() {
           ⚠ Failed to load menu. Try again later.
         </div>
       ) : (
-        <div className="menu__wrapper">
-          {filteredProducts.map((el) => (
-            <div key={el.id} className="menu__wrapper-item" onClick={()=>handleSelectProduct(el.id)}>
-               
-              <div className="menu__wrapper-image">
-                <Image
-                  className="coffee-image"
-                  width={100}
-                  height={100}
-                  alt={el.name}
-                  src={`${el?.imageUrl ?? '/images/tea-2.jpg'}`}
-                />
-              </div>
-              <div className="menu__wrapper-info">
-                <h4 className="menu__wrapper-subtitle">{el.name}</h4>
-                <p className="menu__wrapper-text">{el.description}</p>
-                <div className="menu__price-container">{el.price}</div>
-              </div>
-            {open && <ProductModal open={open} setOpen={setOpen} selectedProduct={selectedProduct}/>}
-            </div>
-          ))}
-        </div>
+        <ProductCard filteredProducts={filteredProducts} />
       )}
       <button className="menu__showmore">
         <Image

@@ -1,6 +1,5 @@
 import CartPage from "../components/CartPage";
 
-
 export default function Cart() {
   return (
     <>
@@ -8,3 +7,4 @@ export default function Cart() {
     </>
   );
 }
+
